@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import "./App.css";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 
@@ -35,6 +35,14 @@ function App() {
                         setItem(updatedTodos); // 상태가 업데이트된 후 로컬 스토리지 설정
                         return updatedTodos;
                     });
+                    // startTransition(() => {
+                    //     setTodos(prevTodos => {
+                    //         const updatedTodos = [...prevTodos, newItem];
+                    //         // 상태가 업데이트된 후 로컬 스토리지 설정
+                    //         setItem(updatedTodos);
+                    //         return updatedTodos;
+                    //     });
+                    // });
                     setContent("");
                 }}
             >
