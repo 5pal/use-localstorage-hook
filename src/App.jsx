@@ -1,27 +1,31 @@
-import { startTransition, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 
 function App() {
-    const key = "chat_list";
+    const KEY = "chat_list";
     const [content, setContent] = useState("");
     const [todos, setTodos] = useState([]);
 
-    const { setItem, getItem, removeItem, clearItem } = useLocalStorage(key);
+    const { setItem, getItem, removeItem, clearItem } = useLocalStorage(KEY);
 
-    const contentChangeHandler = event => {
-        setContent(event.target.value);
+    const contentChangeHandler = ev => {
+        setContent(ev.target.value);
     };
 
+    const savedTodos = getItem();
     useEffect(() => {
-        setTodos(getItem());
+        console.log(1);
+        if (savedTodos) {
+            setTodos(savedTodos);
+        }
     }, []);
 
     return (
         <>
             <h1>React Custom Hook</h1>
             <h2>useLocalStorage</h2>
-            <h3>key : {key}</h3>
+            <h3>key : {KEY}</h3>
             <form
                 onSubmit={ev => {
                     ev.preventDefault();
@@ -55,21 +59,47 @@ function App() {
 
                 <button type="submit">Set</button>
             </form>
-            <button
-                onClick={() => {
-                    getItem();
-                }}
-            >
-                Get
-            </button>
+
             <ul>
-                {todos &&
+                {todos.length > 0 ? (
                     todos.map(todo => (
-                        <div key={todo.id}>
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                            key={todo.id}
+                        >
                             <li>{todo.body}</li>
-                            <button onClick={() => {}}>remove</button>
+                            <div
+                                style={{
+                                    display: "flex",
+                                    gap: "10px",
+                                    width: "100%",
+                                }}
+                            >
+                                <button style={{ width: "50%" }}>Edit</button>
+                                <button
+                                    style={{ width: "50%" }}
+                                    onClick={() => {
+                                        alert("Are you sure?");
+                                        const newItems = removeItem(todo.id);
+
+                                        setTodos(() => {
+                                            const updatedTodos = newItems;
+                                            setItem(updatedTodos); // 상태가 업데이트된 후 로컬 스토리지 설정
+                                            return updatedTodos;
+                                        });
+                                    }}
+                                >
+                                    remove
+                                </button>
+                            </div>
                         </div>
-                    ))}
+                    ))
+                ) : (
+                    <p>no data...</p>
+                )}
             </ul>
             <button
                 onClick={() => {
@@ -80,7 +110,6 @@ function App() {
             >
                 All Clear
             </button>
-            <button onClick={() => {}}>one remove</button>
         </>
     );
 }

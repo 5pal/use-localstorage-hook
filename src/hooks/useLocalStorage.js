@@ -4,12 +4,16 @@ export const useLocalStorage = key => {
     };
 
     const getItem = () => {
-        const item = localStorage.getItem(key);
-        return item ? JSON.parse(item) : undefined;
+        const items = localStorage.getItem(key);
+        return items ? JSON.parse(items) : [];
     };
 
-    const removeItem = () => {
-        localStorage.removeItem(key);
+    const removeItem = itemId => {
+        const items = localStorage.getItem(key);
+        const itemArr = JSON.parse(items);
+        const newItemArr = itemArr.filter(item => item.id !== itemId);
+
+        return newItemArr;
     };
 
     const clearItem = () => {
